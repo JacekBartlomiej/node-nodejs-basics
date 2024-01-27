@@ -6,7 +6,7 @@ const errorMessage = "FS operation failed";
 
 const copy = async () => {
     try {
-        await cp(srcPath, destPath, {errorOnExist: true, recursive: true});
+        await cp(srcPath, destPath, {force: false, errorOnExist: true, recursive: true});
     } catch {
         throw new Error(errorMessage);
     }
