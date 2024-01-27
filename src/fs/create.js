@@ -1,30 +1,24 @@
-import { stat, writeFile } from "node:fs";
+import { stat, writeFile } from "node:fs/promises";
 
 //TODO: check how to do it with relative file path
 const path = "./src/fs/files";
 const fileName = "message.txt";
 
-
-//TODO: provide async (promise) version
 const create = async () => {
-  stat(`${path}/${fileName}`, (err, stats) => {
-    if (stats) {
+  try {
+    await stat(`${path}/${fileName}`);
+    throw new Error("FS operation failed");
+  } catch (err) {
+    if (err.code === "ENOENT") {
+      try {
+        await writeFile(`${path}/${fileName}`, "I am fresh and young", "utf8");
+      } catch (err) {
+        throw new Error("FS operation failed");
+      }
+    } else {
       throw new Error("FS operation failed");
-    } else if (err.code === "ENOENT") {
-      writeFile(
-        `${path}/${fileName}`,
-        "I am fresh and young",
-        "utf8",
-        (err, result) => {
-          if (err) {
-            throw new Error("FS operation failed");
-          } else {
-            console.log(`The file has been saved with result: ${result}!`);
-          }
-        }
-      );
     }
-  });
+  }
 };
 
 await create();
